@@ -16,6 +16,7 @@ type UndirectedEdge struct {
 
 // SampleKRegularDirected From n elements, sample a random k-connected graph, and return its edges
 // See https://www.rdocumentation.org/packages/igraph/versions/1.2.5/topics/sample_k_regular
+// See also: https://github.com/igraph/igraph/blob/c2ccebab0be6bac56d9787cbfa4130eec64b76b2/src/games.c
 func SampleKRegularDirected(n, k int) []DirectedEdge {
 	if k > n-1 {
 		panic("k cannot be larger than n - 1")
