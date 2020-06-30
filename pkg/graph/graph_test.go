@@ -1,4 +1,4 @@
-package model
+package graph
 
 import "testing"
 
@@ -24,26 +24,26 @@ func TestSampleKRegular(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			edges := SampleKRegular(tc.n, tc.k)
+			edges := SampleKRegularDirected(tc.n, tc.k)
 			if len(edges) != tc.n*tc.k {
 				t.Errorf("Expected %d edges, got %d", tc.n*tc.k, len(edges))
 			}
 			// How many times an entry appears in the lefthand/righthand side of a edge
-			entryInLeft := make(map[int]int)
-			entryInRight := make(map[int]int)
+			entryInFrom := make(map[int]int)
+			entryInTo := make(map[int]int)
 			for _, edge := range edges {
-				entryInLeft[edge.Left]++
-				entryInRight[edge.Right]++
+				entryInFrom[edge.To]++
+				entryInTo[edge.From]++
 			}
-			for entry, freq := range entryInLeft {
+			for entry, freq := range entryInFrom {
 				if freq != tc.k {
-					t.Errorf("Expected %d instances of entry %d on the left, found %d", tc.k, entry, freq)
+					t.Errorf("Expected %d instances of entry %d as a 'from' in an edge, found %d", tc.k, entry, freq)
 				}
 			}
 
-			for entry, freq := range entryInRight {
+			for entry, freq := range entryInTo {
 				if freq != tc.k {
-					t.Errorf("Expected %d instances of entry %d on the right, found %d", tc.k, entry, freq)
+					t.Errorf("Expected %d instances of entry %d as a 'to' in an edge, found %d", tc.k, entry, freq)
 				}
 			}
 		})
