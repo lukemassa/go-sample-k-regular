@@ -34,6 +34,9 @@ func TestSampleKRegular(t *testing.T) {
 			for _, edge := range edges {
 				entryInFrom[edge.To]++
 				entryInTo[edge.From]++
+				if edge.To == edge.From {
+					t.Errorf("Graph contains a loop at %d", edge.To)
+				}
 			}
 			for entry, freq := range entryInFrom {
 				if freq != tc.k {
