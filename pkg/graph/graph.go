@@ -27,7 +27,6 @@ type UndirectedEdge struct {
 
 // SampleKRegularDirectedNew better
 func sampleKRegularUndirectedNew(n, k int) [][]int {
-	fmt.Printf("n: %d, k: %d\n", n, k)
 	res := graph.Gnm3Undirected(n, (n*k)/2, nil)
 	edges := make([][]int, n)
 	for i := 0; i < len(res.AdjacencyList); i++ {
