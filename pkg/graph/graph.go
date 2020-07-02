@@ -1,5 +1,16 @@
 package graph
 
+import (
+	"fmt"
+	"math/rand"
+
+	"github.com/soniakeys/graph"
+)
+
+var (
+	SampleKRegularUndirected = sampleKRegularUndirectedNew
+)
+
 // Code for generating random edges on a graph
 
 // DirectedEdge An edge of a directed graph
@@ -14,58 +25,59 @@ type UndirectedEdge struct {
 	B int
 }
 
-// SampleKRegularDirected From n elements, sample a random k-connected graph, and return its edges
+// SampleKRegularDirectedNew better
+func sampleKRegularUndirectedNew(n, k int) [][]int {
+	fmt.Printf("n: %d, k: %d\n", n, k)
+	res := graph.Gnm3Undirected(n, (n*k)/2, nil)
+	edges := make([][]int, n)
+	for i := 0; i < len(res.AdjacencyList); i++ {
+		edges[i] = make([]int, len(res.AdjacencyList[i]))
+		for j := 0; j < len(res.AdjacencyList[i]); j++ {
+			edges[i][j] = int(res.AdjacencyList[i][j])
+		}
+	}
+	return edges
+}
+
+// SampleKRegularDirectedOriginal From n elements, sample a random k-connected graph, and return its edges
 // See https://www.rdocumentation.org/packages/igraph/versions/1.2.5/topics/sample_k_regular
 // See also: https://github.com/igraph/igraph/blob/c2ccebab0be6bac56d9787cbfa4130eec64b76b2/src/games.c
-func SampleKRegularDirected(n, k int) []DirectedEdge {
+func sampleKRegularDirectedOriginal(n, k int) [][]int {
 	if k > n-1 {
 		panic("k cannot be larger than n - 1")
 	}
-
-	if n == 2 && k == 1 {
-		return []DirectedEdge{
-			{
-				From: 0,
-				To:   1,
-			},
-			{
-				From: 1,
-				To:   0,
-			},
+	LeftStubs := make([]int, n*k)
+	RightStubs := make([]int, n*k)
+	for i := 0; i < n; i++ {
+		for j := 0; j < k; j++ {
+			LeftStubs[i*k+j] = i
+			RightStubs[i*k+j] = i
 		}
 	}
-	if n == 3 && k == 2 {
-		return []DirectedEdge{
-			{
-				From: 0,
-				To:   1,
-			},
-			{
-				From: 1,
-				To:   0,
-			},
-			{
-				From: 0,
-				To:   2,
-			},
-			{
-				From: 2,
-				To:   0,
-			},
-			{
-				From: 1,
-				To:   2,
-			},
-			{
-				From: 2,
-				To:   1,
-			},
+
+	for true {
+
+		edges := make([][]int, n)
+
+		rand.Shuffle(n*k, func(i, j int) {
+			RightStubs[i], RightStubs[j] = RightStubs[j], RightStubs[i]
+		})
+
+		found := true
+		for i := 0; i < n*k; i++ {
+
+			if LeftStubs[i] == RightStubs[i] {
+				found = false
+				break
+			}
+			if edges[LeftStubs[i]] == nil {
+				edges[LeftStubs[i]] = make([]int, 0)
+			}
+			edges[LeftStubs[i]] = append(edges[LeftStubs[i]], RightStubs[i])
+		}
+		if found {
+			return edges
 		}
 	}
-	return nil
-}
-
-// SampleKRegularUndirected same as SampleKRegularDirected, but returns undirected edges
-func SampleKRegularUndirected(n, k int) []UndirectedEdge {
-	return nil
+	panic("Unreachable")
 }
