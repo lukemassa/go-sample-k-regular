@@ -1,7 +1,6 @@
 package graph
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/soniakeys/graph"
